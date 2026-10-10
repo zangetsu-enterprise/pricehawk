@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PriceHawk — Track price drops on any store URL</title>
+<meta name="description" content="Paste any e-commerce product URL, set your target price, and get alerted when it drops. Free for 3 trackers. PRO unlocks unlimited tracking.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">🦅 PriceHawk</div>
+    <div class="topbar-actions">
+      <span id="planBadge" class="plan-badge free">FREE</span>
+      <button id="proBtn" class="btn btn-gold">Go PRO</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Never overpay again.</h1>
+    <p>Paste <strong>any</strong> product URL — Amazon, niche shops, anywhere —
+    set the price you'd pay, and PriceHawk watches it for you.</p>
+  </section>
+
+  <section class="card add-card">
+    <h2>Track a new product</h2>
+    <div class="add-row">
+      <input id="urlInput" type="url" placeholder="https://store.com/product/awesome-gadget" autocomplete="off">
+      <button id="analyzeBtn" class="btn btn-primary">Analyze URL</button>
+    </div>
+    <div id="preview" class="preview hidden"></div>
+    <div id="addForm" class="hidden">
+      <div class="add-row">
+        <input id="currentInput" type="number" min="0.01" step="0.01" placeholder="Current price (e.g. 29.99)" class="hidden">
+        <input id="targetInput" type="number" min="0.01" step="0.01" placeholder="Target price (e.g. 24.99)">
+        <button id="addBtn" class="btn btn-primary">Start tracking</button>
+      </div>
+      <p class="hint" id="modeHint"></p>
+    </div>
+  </section>
+
+  <section class="toolbar">
+    <h2>Your trackers <span id="countLabel" class="muted"></span></h2>
+    <button id="checkAllBtn" class="btn">🔄 Check all now</button>
+  </section>
+
+  <section id="alerts" class="alerts hidden"></section>
+  <section id="grid" class="grid"></section>
+  <div id="empty" class="empty">
+    <p>No trackers yet. Paste a product URL above to start — it takes 10 seconds.</p>
+  </div>
+</main>
+
+<footer class="wrap footer">
+  <p>PriceHawk by <strong>Chachi</strong> · Free plan: 3 trackers ·
+  <a href="#" id="howPayLink">How PRO payment verification works</a></p>
+</footer>
+
+<!-- PRO / paywall modal -->
+<div id="proModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="modal-close" id="proClose">✕</button>
+    <h2>PriceHawk PRO</h2>
+    <p class="muted">Unlimited trackers · priority checks · price history forever</p>
+    <div class="tier-row">
+      <button class="tier selected" data-tier="monthly" data-amount="12">
+        <strong>$12</strong><span>/month</span>
+      </button>
+      <button class="tier" data-tier="lifetime" data-amount="49">
+        <strong>$49</strong><span>lifetime</span>
+      </button>
+    </div>
+    <div class="pay-box">
+      <p>Send exactly <strong id="payAmount">$12</strong> in <strong>USDT (BEP20)</strong>
+      on <strong>BNB Smart Chain</strong> to:</p>
+      <code id="payAddress" class="addr">0xb2a38e074808f0c0d4ee9c13f5894c6c601fb172</code>
+      <div class="qr-row">
+        <img id="payQr" alt="USDT payment QR" width="140" height="140">
+        <button id="copyAddr" class="btn">📋 Copy address</button>
+      </div>
+      <p class="warn">⚠️ BSC network ONLY. Sending on any other network will lose your funds.</p>
+      <label>Transaction hash (after you send):</label>
+      <input id="txInput" placeholder="0x…" autocomplete="off">
+      <button id="verifyBtn" class="btn btn-gold btn-block">Verify payment &amp; unlock PRO</button>
+      <p id="verifyMsg" class="verify-msg"></p>
+    </div>
+    <details class="alt-pay">
+      <summary>Prefer PayPal?</summary>
+      <p>Send <strong>$12</strong> (monthly) or <strong>$49</strong> (lifetime) to
+      <strong>chachiafk@gmail.com</strong> with the note <em>"PriceHawk PRO"</em>,
+      then email your receipt to the same address. Manual activation within 24h.</p>
+    </details>
+    <p class="tiny muted">Verification runs against the public BSC blockchain —
+    anyone can audit it. <a href="#" id="howPayLink2">How it works</a></p>
+  </div>
+</div>
+
+<!-- How verification works modal -->
+<div id="howModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="modal-close" id="howClose">✕</button>
+    <h2>How payment verification works</h2>
+    <ol class="how-list">
+      <li>You send USDT on BNB Smart Chain to our published address.</li>
+      <li>You paste the transaction hash here.</li>
+      <li>Our server queries a <strong>public BSC RPC node</strong> for the
+        transaction receipt — no login, no secrets, fully auditable.</li>
+      <li>It accepts the payment only if: the tx <strong>succeeded</strong>,
+        it called the <strong>official USDT contract</strong>
+        (<code class="tiny-code">0x55d3…7955</code>), and a
+        <code class="tiny-code">Transfer</code> event sent
+        <strong>≥ the exact PRO price</strong> to our address.</li>
+      <li>Fake hashes, failed txs, wrong tokens, underpayments, and payments
+        to any other address are <strong>rejected</strong>.</li>
+    </ol>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>
